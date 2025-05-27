@@ -134,10 +134,28 @@ pub async fn sign_up(
     )))
 }
 
+#[derive(Serialize)]
+#[serde(crate = "rocket::serde")]
+pub struct ResMe {
+    id: i32,
+    email: String,
+    firstname: String,
+    lastname: String,
+}
+
 #[get("/me")]
-pub async fn me(db: &State<DatabaseConnection>, user: AuthenticatedUser) -> Response<String> {
+pub async fn me(db: &State<DatabaseConnection>, user: AuthenticatedUser) -> Response<Json<ResMe>> {
+    let db = db as &DatabaseConnection;
+
+    let u = User::find_by_id(user.id).one(db).await?.unwrap();
+
     Ok(SuccessResponse((
         Status::Ok,
-        "My user ID is: ".to_string() + user.id.to_string().as_str(),
+        Json(ResMe {
+            id: u.id,
+            email: u.email,
+            firstname: u.firstname,
+            lastname: u.lastname,
+        }),
     )))
 }

@@ -80,6 +80,7 @@ async fn main() {
                 controllers::authors::show,
                 controllers::authors::update,
                 controllers::authors::delete,
+                controllers::authors::get_books
             ],
         )
         .mount(
